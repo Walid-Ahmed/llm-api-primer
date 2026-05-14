@@ -1,0 +1,32 @@
+# Environment variables — never commit real keys
+.env
+.env.local
+**/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Logs generated at runtime
+**/conversation_log.txt
+**/messages_log.txt
+**/ollama_conversation_log.txt
+**/ollama_messages_log.txt
+
+# macOS
+.DS_Store
