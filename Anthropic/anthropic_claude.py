@@ -16,7 +16,8 @@ user_prompt = "Tell a light-hearted joke for an audience of Data Scientists"
 
 # Anthropic keeps the system instruction separate from the user messages.
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    # Haiku is fast and lower-cost, which makes it good for small tutorial demos.
+    model="claude-haiku-4-5-20251001",
     # max_tokens sets the maximum number of tokens Claude can generate
     # in the response. It does not count the input prompt tokens.
     # Lower values make shorter/cheaper replies; higher values allow longer replies.

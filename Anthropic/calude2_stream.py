@@ -20,7 +20,8 @@ user_prompt = (
 
 # messages.stream() returns a context manager; the stream stays open until the `with` block exits
 result = client.messages.stream(
-    model="claude-sonnet-4-20250514",
+    # Haiku is fast and lower-cost, which makes it good for streaming demos.
+    model="claude-haiku-4-5-20251001",
     # max_tokens limits how many output tokens Claude can generate.
     # It does not count the input prompt tokens.
     # Higher values allow longer streamed responses; lower values cut replies shorter.
