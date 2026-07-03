@@ -5,6 +5,7 @@ import google.generativeai as genai
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
+# Keep reusable prompt pieces separate so they are easy to swap in demos.
 system_message = "You are a helpful coding assistant."
 user_prompt = "Tell me a Python joke."
 

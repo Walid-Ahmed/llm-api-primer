@@ -22,6 +22,7 @@ def choose_system_message():
     return options.get(choice, options["1"])
 
 def call_gpt(history):
+    """Send the selected system prompt plus prior turns to the model."""
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=history,
@@ -44,6 +45,7 @@ def chat_loop():
 
         history.append({"role": "user", "content": user_input})
         assistant_response = call_gpt(history)
+        # Append the reply so future turns include both sides of the conversation.
         history.append({"role": "assistant", "content": assistant_response})
 
         print(f"Assistant: {assistant_response}\n")

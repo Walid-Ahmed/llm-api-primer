@@ -109,6 +109,66 @@ for chunk in stream:
 
 ---
 
+### OpenAI — Chain-of-Thought & Thinking
+
+Two complementary reasoning approaches. See [openai/openai_cot_thinking.py](openai/openai_cot_thinking.py).
+
+**CoT via prompt** (any model) — the model reasons visibly inside its reply:
+
+```python
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "system", "content": "Think step by step before giving your final answer."},
+        {"role": "user", "content": "Your question here"},
+    ],
+)
+print(response.choices[0].message.content)  # includes the reasoning steps
+```
+
+**Built-in Thinking** (o-series models) — the model reasons internally before answering:
+
+```python
+response = client.chat.completions.create(
+    model="o4-mini",
+    reasoning_effort="medium",  # "low" | "medium" | "high"
+    messages=[{"role": "user", "content": "Your question here"}],
+)
+# msg.content is the final answer ONLY — reasoning is hidden server-side
+# and never returned in the response body. The only trace is the token count:
+# response.usage.completion_tokens_details.reasoning_tokens
+print(response.choices[0].message.content)
+```
+
+> **Note:** This is the key difference from Anthropic's extended thinking — Claude can optionally return its thinking content blocks so you can read the reasoning; OpenAI keeps it fully hidden.
+
+**Sample output:**
+
+```text
+=== CoT via prompt (gpt-4o-mini) ===
+Let's define the cost of the ball as x dollars. According to the problem, the bat costs $1.00 more
+than the ball, which can be expressed as x + 1.00 dollars.
+
+Now, we can set up the equation based on the total cost:
+  x + (x + 1.00) = 1.10
+  2x + 1.00 = 1.10
+  2x = 0.10
+  x = 0.05
+
+Thus, the cost of the ball is 0.05 dollars, or 5 cents.
+The ball costs $0.05 (5 cents).
+
+=== Built-in Thinking (o4-mini, effort=medium) ===
+Answer: The ball costs $0.05 (5 cents).
+Tokens — prompt: 38, reasoning: 128, output: 23
+```
+
+The token breakdown confirms the thinking happened: **128 reasoning tokens** were consumed silently before the final answer — none of that content appears in `msg.content`. Exact token counts vary by model and response.
+
+**Models:** `o4-mini`, `o3`, `o3-mini`, `o1`
+
+---
+
 ### OpenAI — Responses API (newer)
 
 `responses.create()` is the modern OpenAI API (2025+). Key differences from `chat.completions`:
@@ -239,6 +299,7 @@ using_llm_api/
 ├── openai/
 │   ├── openai_basic.py          # Basic GPT call
 │   ├── open_ai_stream.py        # Streaming GPT call
+│   ├── openai_cot_thinking.py   # CoT via prompt + built-in thinking (o-series)
 │   └── gpt.py
 ├── Google/
 │   └── google_gemini.py         # Gemini call

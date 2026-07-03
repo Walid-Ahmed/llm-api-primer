@@ -55,6 +55,7 @@ def call_ollama(model, messages):
 # -------------------------------
 def call_bot1():
     msgs = [{"role": "system", "content": system_prompt_1}]
+    # Bot 1 treats its prior lines as assistant turns and Bot 2 as the user.
     for b1, b2 in zip(bot1_messages, bot2_messages):
         msgs.append({"role": "assistant", "content": b1})
         msgs.append({"role": "user", "content": b2})
@@ -66,6 +67,7 @@ def call_bot1():
 # -------------------------------
 def call_bot2():
     msgs = [{"role": "system", "content": system_prompt_2}]
+    # Bot 2 gets the mirrored role mapping so the dialogue stays coherent.
     for b1, b2 in zip(bot1_messages, bot2_messages):
         msgs.append({"role": "user", "content": b1})
         msgs.append({"role": "assistant", "content": b2})

@@ -8,6 +8,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 system_message = "You are a helpful assistant."
 
 def call_gpt(history):
+    """Send the full conversation history and return the assistant's reply."""
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=history,
@@ -28,6 +29,7 @@ def chat_loop():
 
         history.append({"role": "user", "content": user_input})
         assistant_response = call_gpt(history)
+        # Store the assistant reply too, otherwise the next turn has no memory of it.
         history.append({"role": "assistant", "content": assistant_response})
 
         print(f"Assistant: {assistant_response}\n")

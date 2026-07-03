@@ -28,6 +28,7 @@ gpt_messages = ["Hi there"]
 claude_messages = ["Hi"]
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Keep generated logs beside the script so relative execution paths do not matter.
 LOG_FILE = os.path.join(BASE_DIR, "conversation_log.txt")
 MSG_LOG_FILE = os.path.join(BASE_DIR, "messages_log.txt")
 
@@ -81,6 +82,7 @@ log_to_file(f"GPT: {gpt_messages[0]}")
 log_to_file(f"Claude: {claude_messages[0]}")
 
 for i in range(5):
+    # Each model receives the conversation from its own perspective.
     gpt_next = call_gpt()
     print(f"GPT:\n{gpt_next}\n")
     gpt_messages.append(gpt_next)

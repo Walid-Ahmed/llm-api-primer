@@ -14,6 +14,7 @@ client = anthropic.Anthropic(api_key=anthropic_api_key)
 system_message = "You are an assistant that is great at telling jokes"
 user_prompt = "Tell a light-hearted joke for an audience of Data Scientists"
 
+# Anthropic keeps the system instruction separate from the user messages.
 response = client.messages.create(
     model="claude-sonnet-4-20250514",
     max_tokens=200,

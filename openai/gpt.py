@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
+# override=True lets values in .env replace any matching shell variables.
 load_dotenv(override=True)
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -13,6 +14,7 @@ client = OpenAI(api_key=openai_api_key)
 system_message = "You are an assistant that is great at telling jokes"
 user_prompt = "Tell a light-hearted joke for an audience of Data Scientists"
 
+# Chat Completions expects a list of role-tagged messages.
 prompts = [
     {"role": "system", "content": system_message},
     {"role": "user", "content": user_prompt}

@@ -8,6 +8,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 system_message = "You are a helpful assistant."
 
 def chat(messages, user_message):
+    # Keep only user/assistant turns in history; add the system message at request time.
     messages.append({"role": "user", "content": user_message})
 
     response = client.chat.completions.create(
@@ -17,6 +18,7 @@ def chat(messages, user_message):
     )
 
     reply = response.choices[0].message.content
+    # Mutating and returning messages makes the state change explicit for the caller.
     messages.append({"role": "assistant", "content": reply})
     return reply, messages
 

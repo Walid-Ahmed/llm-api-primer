@@ -20,6 +20,7 @@ def stream_gpt(prompt):
     )
 
     for chunk in stream:
+        # Some chunks only carry metadata, so delta.content can be None.
         content = chunk.choices[0].delta.content or ""
         if content:
             # flush=True forces each token to print immediately (typing effect)

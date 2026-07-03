@@ -8,6 +8,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 weather_api_key = os.getenv("OPENWEATHER_API_KEY")
 
 if openai_api_key:
+    # Print only a short prefix so the full secret never appears in terminal logs.
     print(f"OpenAI API Key found, begins with: {openai_api_key[:8]}")
 else:
     print("OpenAI API Key not set in .env")
@@ -19,6 +20,7 @@ else:
 
 openai = OpenAI(api_key=openai_api_key)
 
+# Centralize model names so demos can switch models in one place.
 CHAT_MODEL = "gpt-4o-mini"
 IMAGE_MODEL = "dall-e-3"
 
