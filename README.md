@@ -45,7 +45,7 @@ Go through the files in this order if you are learning LLM APIs from scratch:
 14. [`simpleChatBot/chatbot_langchain.py`](simpleChatBot/chatbot_langchain.py) — compare the plain Python chatbot with LangChain's history wrapper.
 15. [`2_Models_chat/gpt_claude/gpt_claude.py`](2_Models_chat/gpt_claude/gpt_claude.py) — watch GPT and Claude talk to each other.
 16. [`2_Models_chat/ollama_dual_chat/ollama_dual_chat.py`](2_Models_chat/ollama_dual_chat/ollama_dual_chat.py) — repeat the dual-chat pattern using local Ollama models.
-17. [`notebooks/`](notebooks/) — use the notebooks for experimentation after the scripts feel familiar.
+17. [`notebooks/`](notebooks/) — every script above also has a notebook version, at the same relative path (e.g. `openai/gpt.py` → `notebooks/openai/gpt.ipynb`). Use whichever form you prefer for experimentation.
 
 Suggested path: first understand one provider, then streaming, then reasoning, then chat memory, then multi-model conversations.
 
