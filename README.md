@@ -25,6 +25,32 @@ DEEPSEEK_API_KEY=...
 
 ---
 
+## Recommended Learning Order
+
+Go through the files in this order if you are learning LLM APIs from scratch:
+
+1. [`openai/openai_basic.py`](openai/openai_basic.py) — start with the smallest OpenAI chat request.
+2. [`openai/gpt.py`](openai/gpt.py) — separate the system prompt, user prompt, and message list.
+3. [`openai/open_ai_stream.py`](openai/open_ai_stream.py) — stream tokens as they arrive instead of waiting for the full answer.
+4. [`openai/openai_responses.py`](openai/openai_responses.py) — compare Chat Completions with the newer Responses API.
+5. [`openai/openai_cot_thinking.py`](openai/openai_cot_thinking.py) — compare visible chain-of-thought prompting with hidden o-series reasoning.
+6. [`Anthropic/anthropic_claude.py`](Anthropic/anthropic_claude.py) — learn Claude's message format and separate `system` parameter.
+7. [`Anthropic/calude2_stream.py`](Anthropic/calude2_stream.py) — stream Claude responses.
+8. [`Google/google_gemini.py`](Google/google_gemini.py) — see how Gemini handles system instructions.
+9. [`deepseek.py`](deepseek.py) — reuse the OpenAI client with a different provider via `base_url`.
+10. [`ollama_api.py`](ollama_api.py) — run a local model with Ollama.
+11. [`simpleChatBot/chatBot1.py`](simpleChatBot/chatBot1.py) — understand multi-turn memory with a simple history list.
+12. [`simpleChatBot/simpleChatBot.py`](simpleChatBot/simpleChatBot.py) — run an interactive terminal chatbot.
+13. [`simpleChatBot/simpleChatBot2.py`](simpleChatBot/simpleChatBot2.py) — choose the assistant personality before chatting.
+14. [`simpleChatBot/chatbot_langchain.py`](simpleChatBot/chatbot_langchain.py) — compare the plain Python chatbot with LangChain's history wrapper.
+15. [`2_Models_chat/gpt_claude/gpt_claude.py`](2_Models_chat/gpt_claude/gpt_claude.py) — watch GPT and Claude talk to each other.
+16. [`2_Models_chat/ollama_dual_chat/ollama_dual_chat.py`](2_Models_chat/ollama_dual_chat/ollama_dual_chat.py) — repeat the dual-chat pattern using local Ollama models.
+17. [`notebooks/`](notebooks/) — use the notebooks for experimentation after the scripts feel familiar.
+
+Suggested path: first understand one provider, then streaming, then reasoning, then chat memory, then multi-model conversations.
+
+---
+
 ## Templates by Provider
 
 ### Anthropic — Claude
