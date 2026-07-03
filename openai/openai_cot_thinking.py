@@ -49,4 +49,4 @@ print("Answer:", msg.content)
 if (usage := thinking_response.usage) and usage.completion_tokens_details:
     print(f"Tokens — prompt: {usage.prompt_tokens}, "
           f"reasoning: {usage.completion_tokens_details.reasoning_tokens}, "
-          f"output: {usage.completion_tokens}")
+          f"completion: {usage.completion_tokens}")
