@@ -17,6 +17,9 @@ user_prompt = "Tell a light-hearted joke for an audience of Data Scientists"
 # Anthropic keeps the system instruction separate from the user messages.
 response = client.messages.create(
     model="claude-sonnet-4-20250514",
+    # max_tokens sets the maximum number of tokens Claude can generate
+    # in the response. It does not count the input prompt tokens.
+    # Lower values make shorter/cheaper replies; higher values allow longer replies.
     max_tokens=200,
     system=system_message,
     messages=[{"role": "user", "content": user_prompt}]
