@@ -48,7 +48,10 @@ msg = thinking_response.choices[0].message
 # reasoning_tokens count in usage.completion_tokens_details.
 print("Answer:", msg.content)
 
-# Token usage — includes reasoning tokens consumed internally
+# Token usage:
+#   prompt     = tokens in the input prompt/messages you sent
+#   reasoning  = hidden internal thinking tokens used by the reasoning model
+#   completion = all completion-side tokens, including hidden reasoning tokens
 if (usage := thinking_response.usage) and usage.completion_tokens_details:
     print(f"Tokens — prompt: {usage.prompt_tokens}, "
           f"reasoning: {usage.completion_tokens_details.reasoning_tokens}, "
