@@ -26,14 +26,12 @@ def chat(messages, user_message):
 # Demonstrate multi-turn memory: the model remembers context across calls
 history = []
 
-reply, history = chat(history, "Hi")
-print("Bot:", reply)
-
-reply, history = chat(history, "What is my name?")
-print("Bot:", reply)
-
-reply, history = chat(history, "My name is Walid")
-print("Bot:", reply)
-
-reply, history = chat(history, "What is my name?")
-print("Bot:", reply)
+for user_message in [
+    "Hi",
+    "What is my name?",
+    "My name is Walid",
+    "What is my name?",
+]:
+    print("User:", user_message)
+    reply, history = chat(history, user_message)
+    print("Bot:", reply)
