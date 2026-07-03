@@ -1,0 +1,7 @@
+anthropic
+openai
+google-generativeai
+ollama
+python-dotenv
+langchain-core
+langchain-openai
