@@ -28,4 +28,5 @@ def stream_gpt(prompt):
 
 
 if __name__ == "__main__":
-    stream_gpt("Tell me a joke about penguins")
+    #stream_gpt("Tell me a joke about penguins")
+    stream_gpt("Write a 500 word story about a penguin learning Python.")
