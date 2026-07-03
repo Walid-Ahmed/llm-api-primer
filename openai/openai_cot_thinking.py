@@ -7,15 +7,18 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 PROBLEM = "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?"
 
-# ── 1. Chain-of-Thought via prompt (works with any model) ──────────────────
-# This demonstrates visible reasoning in the model's answer.
-# It is useful for learning, but the reasoning text becomes part of the output.
-print("=== CoT via prompt (gpt-4o-mini) ===")
+# ── 1. Step-by-step explanation via prompt (works with any model) ─────────
+# This does NOT enable a special hidden reasoning mode.
+# It simply asks the model to show its reasoning in the visible answer.
+# Useful for learning, but the reasoning text becomes part of the output.
+print("=== Step-by-step explanation via prompt (gpt-4o-mini) ===")
 cot_response = client.chat.completions.create(
     model="gpt-4o-mini",
     messages=[
         {
             "role": "system",
+            # This prompt requests a visible step-by-step explanation.
+            # It is different from `reasoning_effort`, which uses hidden reasoning.
             "content": "Think step by step before giving your final answer.",
         },
         {"role": "user", "content": PROBLEM},
