@@ -11,12 +11,23 @@ if not anthropic_api_key:
 client = anthropic.Anthropic(api_key=anthropic_api_key)
 
 system_message = "You are an assistant that is great at telling jokes"
-user_prompt = "Tell a light-hearted joke for an audience of Data Scientists"
+# A longer prompt makes the streaming effect easier to see in the terminal.
+# Keep it bounded so the demo streams for a few seconds without wasting tokens.
+user_prompt = (
+    "Write a playful 180-word mini story about a data scientist teaching "
+    "a confused penguin how to use Python. Make it fun and easy to follow."
+)
 
 # messages.stream() returns a context manager; the stream stays open until the `with` block exits
 result = client.messages.stream(
     model="claude-sonnet-4-20250514",
-    max_tokens=200,
+    # max_tokens limits how many output tokens Claude can generate.
+    # It does not count the input prompt tokens.
+    # Higher values allow longer streamed responses; lower values cut replies shorter.
+    max_tokens=350,
+    # temperature controls randomness/creativity.
+    # 0.0 is more predictable and focused; higher values are more varied.
+    # 0.7 is a good middle ground for a creative joke/story demo.
     temperature=0.7,
     system=system_message,
     messages=[{"role": "user", "content": user_prompt}],
