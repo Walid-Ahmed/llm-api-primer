@@ -1,38 +1,38 @@
-import config  # loads API keys and sets up the OpenAI client via config.py
+import config  # loads OPENAI_API_KEY from .env and stores model names in config.py
 
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_community.chat_message_histories import ChatMessageHistory
 
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful assistant."),
-    # MessagesPlaceholder injects the session's message history at this position
-    MessagesPlaceholder(variable_name="history"),
-    ("human", "{input}")
-])
 
-llm = ChatOpenAI(temperature=0.7, model_name="gpt-4o-mini")
-
-chain = prompt | llm
-
-# In-memory store keyed by session_id — each session keeps its own history
-store = {}
-
-def get_session_history(session_id: str):
-    if session_id not in store:
-        store[session_id] = ChatMessageHistory()
-    return store[session_id]
-
-# RunnableWithMessageHistory automatically loads and saves history around each invoke
-conversation_chain = RunnableWithMessageHistory(
-    chain,
-    get_session_history,
-    input_messages_key="input",
-    history_messages_key="history"
+# ChatOpenAI is LangChain's wrapper around OpenAI chat models.
+llm = ChatOpenAI(
+    model=config.CHAT_MODEL,
+    temperature=0.7,
 )
 
-configuration = {"configurable": {"session_id": "user1"}}
+# This list is the chatbot's memory.
+# We send the whole list to the model every turn.
+history = [
+    SystemMessage(content="You are a helpful assistant.")
+]
 
-print(conversation_chain.invoke({"input": "Hello, who are you?"}, configuration))
-print(conversation_chain.invoke({"input": "Can you remind me what I just asked?"}, configuration))
+
+def chat(user_message):
+    # Save the user's message in memory.
+    history.append(HumanMessage(content=user_message))
+
+    # Ask the model using the full conversation so far.
+    response = llm.invoke(history)
+
+    # Save the assistant's reply too, so the next turn can remember it.
+    history.append(AIMessage(content=response.content))
+
+    return response.content
+
+
+for user_message in [
+    "Hello, who are you?",
+    "Can you remind me what I just asked?",
+]:
+    print("User:", user_message)
+    print("Assistant:", chat(user_message))
