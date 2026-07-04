@@ -7,7 +7,7 @@ A collection of minimal examples for calling different LLM providers via their P
 ## Setup
 
 ```bash
-pip install anthropic openai google-generativeai ollama python-dotenv
+pip install -r requirements.txt
 ```
 
 Copy `.env.example` to `.env` and fill in your keys — the `.env` file is git-ignored and should never be committed:
@@ -34,17 +34,17 @@ Go through the files in this order if you are learning LLM APIs from scratch:
 3. [`openai/open_ai_stream.py`](openai/open_ai_stream.py) — stream tokens as they arrive instead of waiting for the full answer.
 4. [`openai/openai_responses.py`](openai/openai_responses.py) — compare Chat Completions with the newer Responses API.
 5. [`openai/openai_cot_thinking.py`](openai/openai_cot_thinking.py) — compare visible chain-of-thought prompting with hidden o-series reasoning.
-6. [`Anthropic/anthropic_claude.py`](Anthropic/anthropic_claude.py) — learn Claude's message format and separate `system` parameter.
-7. [`Anthropic/calude2_stream.py`](Anthropic/calude2_stream.py) — stream Claude responses.
-8. [`Google/google_gemini.py`](Google/google_gemini.py) — see how Gemini handles system instructions.
+6. [`anthropic/anthropic_claude.py`](anthropic/anthropic_claude.py) — learn Claude's message format and separate `system` parameter.
+7. [`anthropic/claude_stream.py`](anthropic/claude_stream.py) — stream Claude responses.
+8. [`google/google_gemini.py`](google/google_gemini.py) — see how Gemini handles system instructions.
 9. [`deepseek.py`](deepseek.py) — reuse the OpenAI client with a different provider via `base_url`.
 10. [`ollama_api.py`](ollama_api.py) — run a local model with Ollama.
-11. [`simpleChatBot/chatBot1.py`](simpleChatBot/chatBot1.py) — understand multi-turn memory with a simple history list.
-12. [`simpleChatBot/simpleChatBot.py`](simpleChatBot/simpleChatBot.py) — run an interactive terminal chatbot.
-13. [`simpleChatBot/simpleChatBot2.py`](simpleChatBot/simpleChatBot2.py) — choose the assistant personality before chatting.
-14. [`simpleChatBot/chatbot_langchain.py`](simpleChatBot/chatbot_langchain.py) — compare the plain Python chatbot with LangChain's history wrapper.
-15. [`2_Models_chat/gpt_claude/gpt_claude.py`](2_Models_chat/gpt_claude/gpt_claude.py) — watch GPT and Claude talk to each other.
-16. [`2_Models_chat/ollama_dual_chat/ollama_dual_chat.py`](2_Models_chat/ollama_dual_chat/ollama_dual_chat.py) — repeat the dual-chat pattern using local Ollama models.
+11. [`simple_chatbot/chat_bot1.py`](simple_chatbot/chat_bot1.py) — understand multi-turn memory with a simple history list.
+12. [`simple_chatbot/simple_chatbot.py`](simple_chatbot/simple_chatbot.py) — run an interactive terminal chatbot.
+13. [`simple_chatbot/simple_chatbot2.py`](simple_chatbot/simple_chatbot2.py) — choose the assistant personality before chatting.
+14. [`simple_chatbot/chatbot_langchain.py`](simple_chatbot/chatbot_langchain.py) — compare the plain Python chatbot with LangChain's history wrapper.
+15. [`two_model_chat/gpt_claude/gpt_claude.py`](two_model_chat/gpt_claude/gpt_claude.py) — watch GPT and Claude talk to each other.
+16. [`two_model_chat/ollama_dual_chat/ollama_dual_chat.py`](two_model_chat/ollama_dual_chat/ollama_dual_chat.py) — repeat the dual-chat pattern using local Ollama models.
 17. [`notebooks/`](notebooks/) — every script above also has a notebook version, at the same relative path (e.g. `openai/gpt.py` → `notebooks/openai/gpt.ipynb`). Use whichever form you prefer for experimentation.
 
 Suggested path: first understand one provider, then streaming, then reasoning, then chat memory, then multi-model conversations.
@@ -302,7 +302,7 @@ Pull a model first: `ollama pull llama3.2`
 
 ### GPT vs Claude — Dual Conversation
 
-Two models hold a back-and-forth conversation, each with a distinct personality. See [2_Models_chat/gpt_claude/gpt_claude.py](2_Models_chat/gpt_claude/gpt_claude.py).
+Two models hold a back-and-forth conversation, each with a distinct personality. See [two_model_chat/gpt_claude/gpt_claude.py](two_model_chat/gpt_claude/gpt_claude.py).
 
 ```text
 GPT  → argumentative, snarky
@@ -311,7 +311,7 @@ Claude → polite, finds common ground
 
 ### Ollama Dual Chat
 
-Two local Ollama models conversing with each other. See [2_Models_chat/ollama_dual_chat/ollama_dual_chat.py](2_Models_chat/ollama_dual_chat/ollama_dual_chat.py).
+Two local Ollama models conversing with each other. See [two_model_chat/ollama_dual_chat/ollama_dual_chat.py](two_model_chat/ollama_dual_chat/ollama_dual_chat.py).
 
 ---
 
@@ -319,20 +319,20 @@ Two local Ollama models conversing with each other. See [2_Models_chat/ollama_du
 
 ```text
 using_llm_api/
-├── Anthropic/
+├── anthropic/
 │   ├── anthropic_claude.py      # Basic Claude call
-│   └── calude2_stream.py        # Streaming Claude call
+│   └── claude_stream.py         # Streaming Claude call
 ├── openai/
 │   ├── openai_basic.py          # Basic GPT call
 │   ├── open_ai_stream.py        # Streaming GPT call
 │   ├── openai_cot_thinking.py   # CoT via prompt + built-in thinking (o-series)
 │   └── gpt.py
-├── Google/
+├── google/
 │   └── google_gemini.py         # Gemini call
 ├── deepseek.py                  # DeepSeek via OpenAI client
 ├── ollama_api.py                # Local Ollama call
-├── simpleChatBot/               # Simple chatbot examples
-├── 2_Models_chat/
+├── simple_chatbot/              # Simple chatbot examples
+├── two_model_chat/
 │   ├── gpt_claude/              # GPT ↔ Claude conversation
 │   └── ollama_dual_chat/        # Local model ↔ model conversation
 └── notebooks/                   # Jupyter notebooks
