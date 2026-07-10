@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
+# Load OPENAI_API_KEY from .env and create the SDK client.
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -17,9 +18,11 @@ def choose_system_message():
 
     print("Choose assistant style:")
     for key, value in options.items():
+        # Show each available personality before asking for a choice.
         print(f"{key}. {value}")
 
     choice = input("Enter number (default 1): ").strip()
+    # If the user presses Enter or types an unknown option, fall back to "1".
     return options.get(choice, options["1"])
 
 def call_gpt(history):
@@ -28,9 +31,11 @@ def call_gpt(history):
         model="gpt-4o-mini",
         messages=history,
     )
+    # Return just the assistant text so the UI loop stays simple.
     return response.choices[0].message.content
 
 def chat_loop():
+    # Let the user pick the system prompt before conversation history starts.
     system_message = choose_system_message()
     # history carries the full conversation so the model has memory across turns
     history = [{"role": "system", "content": system_message}]
@@ -52,4 +57,5 @@ def chat_loop():
         print(f"Assistant: {assistant_response}\n")
 
 if __name__ == "__main__":
+    # This guard lets you import functions from this file without starting the loop.
     chat_loop()

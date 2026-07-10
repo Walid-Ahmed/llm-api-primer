@@ -4,11 +4,14 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import anthropic
 
+# Load both provider keys from .env before creating clients.
 load_dotenv(override=True)
 
+# Create one client per provider.
 claude = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 openAI_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Store model names in variables so they are easy to swap for experiments.
 gpt_model = "gpt-4.1-mini"
 claude_model = "claude-3-5-haiku-latest"
 
@@ -34,10 +37,12 @@ LOG_FILE = os.path.join(BASE_DIR, "conversation_log.txt")
 MSG_LOG_FILE = os.path.join(BASE_DIR, "messages_log.txt")
 
 def log_to_file(text: str):
+    """Append a human-readable conversation line to the dialogue log."""
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(text + "\n")
 
 def log_messages_to_file(label: str, messages: list):
+    """Append the exact role-tagged messages sent to a model."""
     with open(MSG_LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"\n--- {label} ---\n")
         for m in messages:
@@ -47,20 +52,24 @@ def log_messages_to_file(label: str, messages: list):
 def call_gpt():
     # GPT sees its own turns as "assistant" and Claude's turns as "user"
     messages = [{"role": "system", "content": gpt_system}]
+    # zip() pairs each GPT line with the Claude reply that followed it.
     for gpt, claude_msg in zip(gpt_messages, claude_messages):
         messages.append({"role": "assistant", "content": gpt})
         messages.append({"role": "user", "content": claude_msg})
     log_messages_to_file("GPT Input Messages", messages)
     completion = openAI_client.chat.completions.create(model=gpt_model, messages=messages)
+    # OpenAI chat responses store the assistant text on the first choice.
     return completion.choices[0].message.content
 
 def call_claude():
     # Claude sees GPT's turns as "user" and its own turns as "assistant"
     # The role mapping is intentionally the mirror image of call_gpt()
     messages = []
+    # zip() reconstructs the alternating conversation from Claude's perspective.
     for gpt, claude_msg in zip(gpt_messages, claude_messages):
         messages.append({"role": "user", "content": gpt})
         messages.append({"role": "assistant", "content": claude_msg})
+    # Add GPT's newest line as the latest user message Claude should answer.
     messages.append({"role": "user", "content": gpt_messages[-1]})
     log_messages_to_file("Claude Input Messages", [{"role": "system", "content": claude_system}] + messages)
     message = claude.messages.create(
@@ -69,6 +78,7 @@ def call_claude():
         messages=messages,
         max_tokens=500
     )
+    # Anthropic returns content blocks; the first text block contains the reply.
     return message.content[0].text
 
 # Reset logs each run
@@ -86,11 +96,13 @@ for i in range(5):
     # Each model receives the conversation from its own perspective.
     gpt_next = call_gpt()
     print(f"GPT:\n{gpt_next}\n")
+    # Save GPT's reply before Claude is called, so Claude can respond to it.
     gpt_messages.append(gpt_next)
     log_to_file(f"GPT: {gpt_next}")
 
     claude_next = call_claude()
     print(f"Claude:\n{claude_next}\n")
+    # Save Claude's reply so GPT can see it on the next round.
     claude_messages.append(claude_next)
     log_to_file(f"Claude: {claude_next}")
 

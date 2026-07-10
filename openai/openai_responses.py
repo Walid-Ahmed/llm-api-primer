@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
+# Load OPENAI_API_KEY from .env and create the SDK client.
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -18,4 +19,5 @@ response = client.responses.create(
     input="Tell me a joke",
 )
 
+# output_text is the easiest way to read the final text from a Responses API call.
 print(response.output_text)

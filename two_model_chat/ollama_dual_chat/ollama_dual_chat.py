@@ -28,6 +28,7 @@ bot2_messages = ["Hi"]
 # Log files
 # -------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Store generated logs next to this script, regardless of where you run it from.
 CONV_LOG = os.path.join(BASE_DIR, "conversation_log.txt")
 MSG_LOG = os.path.join(BASE_DIR, "messages_log.txt")
 
@@ -48,6 +49,7 @@ def log_msgs(label: str, msgs: list):
 # Call Ollama wrapper
 # -------------------------------
 def call_ollama(model, messages):
+    """Send messages to one local Ollama model and return only its text reply."""
     response = ollama.chat(model=model, messages=messages)
     return response['message']['content']
 
@@ -57,6 +59,7 @@ def call_ollama(model, messages):
 def call_bot1():
     msgs = [{"role": "system", "content": system_prompt_1}]
     # Bot 1 treats its prior lines as assistant turns and Bot 2 as the user.
+    # This keeps the role labels correct from Bot 1's point of view.
     for b1, b2 in zip(bot1_messages, bot2_messages):
         msgs.append({"role": "assistant", "content": b1})
         msgs.append({"role": "user", "content": b2})
@@ -69,6 +72,7 @@ def call_bot1():
 def call_bot2():
     msgs = [{"role": "system", "content": system_prompt_2}]
     # Bot 2 gets the mirrored role mapping so the dialogue stays coherent.
+    # Bot 1's latest message is added at the end as the new user turn.
     for b1, b2 in zip(bot1_messages, bot2_messages):
         msgs.append({"role": "user", "content": b1})
         msgs.append({"role": "assistant", "content": b2})
@@ -97,12 +101,14 @@ def main():
         # Bot1 responds
         b1_next = call_bot1()
         print(f"Bot1:\n{b1_next}\n")
+        # Save Bot1's reply before Bot2 is called, so Bot2 can respond to it.
         bot1_messages.append(b1_next)
         log_conv(f"Bot1: {b1_next}")
 
         # Bot2 responds
         b2_next = call_bot2()
         print(f"Bot2:\n{b2_next}\n")
+        # Save Bot2's reply so Bot1 can see it on the next round.
         bot2_messages.append(b2_next)
         log_conv(f"Bot2: {b2_next}")
 
@@ -110,4 +116,5 @@ def main():
     print(f"Messages (with roles) saved to: {MSG_LOG}")
 
 if __name__ == "__main__":
+    # This guard lets you import helpers from this file without running the demo.
     main()

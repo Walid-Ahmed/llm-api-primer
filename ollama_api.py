@@ -8,10 +8,12 @@ import ollama
 # Use `ollama list` to see downloaded models and `ollama rm llama3.2` to remove one.
 response = ollama.chat(
     model="llama3.2",  # swap with any model you have pulled, e.g. "phi3", "gemma3"
+    # Ollama uses the same role-based message shape as many hosted chat APIs.
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "Tell me a joke"}
     ]
 )
 
+# The local model's final reply is stored under response["message"]["content"].
 print(response['message']['content'])

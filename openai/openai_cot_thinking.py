@@ -3,9 +3,11 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
+# Load OPENAI_API_KEY from .env and create the SDK client.
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Reuse one problem so the two reasoning styles are easy to compare.
 PROBLEM = "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?"
 
 # ── 1. Step-by-step explanation via prompt (works with any model) ─────────

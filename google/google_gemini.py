@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 
+# Load GOOGLE_API_KEY from .env, then configure the Gemini SDK once.
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
@@ -18,4 +19,5 @@ gemini = genai.GenerativeModel(
 )
 
 response = gemini.generate_content(user_prompt)
+# Gemini returns the generated text on response.text for simple text prompts.
 print(response.text)

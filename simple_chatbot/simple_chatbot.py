@@ -3,9 +3,11 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
+# Load OPENAI_API_KEY from .env and create the SDK client.
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# This behavior instruction is stored as the first message in chat history.
 system_message = "You are a helpful assistant."
 
 def call_gpt(history):
@@ -17,6 +19,7 @@ def call_gpt(history):
         model="gpt-4o-mini",
         messages=history,
     )
+    # Return just the assistant text so the UI loop stays simple.
     return response.choices[0].message.content
 
 def chat_loop():
@@ -36,10 +39,12 @@ def chat_loop():
         # Add the user's new message to the conversation history.
         history.append({"role": "user", "content": user_input})
         assistant_response = call_gpt(history)
+
         # Add the assistant reply too, otherwise the next turn will not remember it.
         history.append({"role": "assistant", "content": assistant_response})
 
         print(f"Assistant: {assistant_response}\n")
 
 if __name__ == "__main__":
+    # This guard lets you import functions from this file without starting the loop.
     chat_loop()

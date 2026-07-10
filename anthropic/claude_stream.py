@@ -3,14 +3,18 @@ import os
 from dotenv import load_dotenv
 import anthropic
 
+# Load API keys from .env before creating the provider client.
 load_dotenv(override=True)
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
 
+# Fail early with a clear message if the key is missing.
 if not anthropic_api_key:
     raise ValueError("ANTHROPIC_API_KEY not found in .env")
 
+# The client object is reused for every Anthropic request in this script.
 client = anthropic.Anthropic(api_key=anthropic_api_key)
 
+# The system prompt sets Claude's behavior for the full request.
 system_message = "You are an assistant that is great at telling jokes"
 # A longer prompt makes the streaming effect easier to see in the terminal.
 # Keep it bounded so the demo streams for a few seconds without wasting tokens.
@@ -19,7 +23,7 @@ user_prompt = (
     "a confused penguin how to use Python. Make it fun and easy to follow."
 )
 
-# messages.stream() returns a context manager; the stream stays open until the `with` block exits
+# messages.stream() returns a context manager; the stream stays open until the `with` block exits.
 result = client.messages.stream(
     # Haiku is fast and lower-cost, which makes it good for streaming demos.
     model="claude-haiku-4-5-20251001",
@@ -35,7 +39,8 @@ result = client.messages.stream(
     messages=[{"role": "user", "content": user_prompt}],
 )
 
-# text_stream yields individual text deltas as they arrive from the API
+# text_stream yields individual text deltas as they arrive from the API.
+# end="" prevents extra newlines; flush=True prints each piece immediately.
 with result as stream:
     for text in stream.text_stream:
         print(text, end="", flush=True)

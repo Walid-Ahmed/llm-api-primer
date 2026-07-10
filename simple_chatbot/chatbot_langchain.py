@@ -1,4 +1,5 @@
 # Run with: python simple_chatbot/chatbot_langchain.py
+# Importing config runs load_dotenv() and exposes shared model settings.
 import config  # loads OPENAI_API_KEY from .env and stores model names in config.py
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
@@ -19,6 +20,7 @@ history = [
 
 
 def chat(user_message):
+    """Add one user message, call the model, and store the assistant reply."""
     # Save the user's message in memory.
     history.append(HumanMessage(content=user_message))
 
@@ -35,5 +37,6 @@ for user_message in [
     "Hello, who are you?",
     "Can you remind me what I just asked?",
 ]:
+    # The second question demonstrates that LangChain message history is working.
     print("User:", user_message)
     print("Assistant:", chat(user_message))

@@ -3,12 +3,16 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
+# Load OPENAI_API_KEY from .env and create the SDK client.
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# The system message is reused for each streamed request.
 system_message = "You are a helpful assistant."
 
 def stream_gpt(prompt):
+    """Stream one assistant response token-by-token in the terminal."""
+    # Build a fresh message list for this one prompt.
     messages = [
         {"role": "system", "content": system_message},
         {"role": "user", "content": prompt},
@@ -29,5 +33,6 @@ def stream_gpt(prompt):
 
 
 if __name__ == "__main__":
-    #stream_gpt("Tell me a joke about penguins")
+    # Swap the prompt below to experiment with different streamed outputs.
+    # stream_gpt("Tell me a joke about penguins")
     stream_gpt("Write a 500 word story about a penguin learning Python.")
