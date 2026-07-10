@@ -1,3 +1,4 @@
+# Run with: python simple_chatbot/chatbot_langchain.py
 import config  # loads OPENAI_API_KEY from .env and stores model names in config.py
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage

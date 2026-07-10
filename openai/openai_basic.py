@@ -1,3 +1,4 @@
+# Run with: python openai/openai_basic.py
 import os
 from dotenv import load_dotenv
 from openai import OpenAI

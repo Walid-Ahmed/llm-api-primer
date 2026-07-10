@@ -1,3 +1,4 @@
+# Run with: python anthropic/anthropic_claude.py
 import os
 from dotenv import load_dotenv
 import anthropic

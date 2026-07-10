@@ -7,6 +7,8 @@ A collection of minimal examples for calling different LLM providers via their P
 ## Setup
 
 ```bash
+git clone https://github.com/Walid-Ahmed/llm-api-primer.git
+cd llm-api-primer
 pip install -r requirements.txt
 ```
 

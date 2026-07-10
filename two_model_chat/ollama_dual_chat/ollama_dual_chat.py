@@ -1,3 +1,4 @@
+# Run with: python two_model_chat/ollama_dual_chat/ollama_dual_chat.py
 import os
 import ollama
 

@@ -1,3 +1,4 @@
+# Run with: python two_model_chat/gpt_claude/gpt_claude.py
 import os
 from dotenv import load_dotenv
 from openai import OpenAI

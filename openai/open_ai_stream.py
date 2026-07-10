@@ -1,3 +1,4 @@
+# Run with: python openai/open_ai_stream.py
 import os
 from dotenv import load_dotenv
 from openai import OpenAI

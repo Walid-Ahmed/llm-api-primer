@@ -1,3 +1,4 @@
+# Run with: python simple_chatbot/chat_bot1.py
 import os
 from dotenv import load_dotenv
 from openai import OpenAI

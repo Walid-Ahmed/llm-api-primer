@@ -1,3 +1,4 @@
+# Run with: python anthropic/claude_stream.py
 import os
 from dotenv import load_dotenv
 import anthropic

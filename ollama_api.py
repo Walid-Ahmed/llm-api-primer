@@ -1,3 +1,4 @@
+# Run with: python ollama_api.py
 import ollama
 
 # Ollama runs models locally — no API key needed.
