@@ -35,7 +35,7 @@ Go through the files in this order if you are learning LLM APIs from scratch:
 2. [`openai/gpt.py`](openai/gpt.py) — separate the system prompt, user prompt, and message list.
 3. [`openai/open_ai_stream.py`](openai/open_ai_stream.py) — stream tokens as they arrive instead of waiting for the full answer.
 4. [`openai/openai_responses.py`](openai/openai_responses.py) — compare Chat Completions with the newer Responses API.
-5. [`openai/openai_cot_thinking.py`](openai/openai_cot_thinking.py) — compare visible chain-of-thought prompting with hidden o-series reasoning.
+5. [`openai/openai_cot_thinking.py`](openai/openai_cot_thinking.py) — compare a requested explanation with built-in reasoning and an optional reasoning summary.
 6. [`anthropic/anthropic_claude.py`](anthropic/anthropic_claude.py) — learn Claude's message format and separate `system` parameter.
 7. [`anthropic/claude_stream.py`](anthropic/claude_stream.py) — stream Claude responses.
 8. [`google/google_gemini.py`](google/google_gemini.py) — see how Gemini handles system instructions.
@@ -137,11 +137,11 @@ for chunk in stream:
 
 ---
 
-### OpenAI — Chain-of-Thought & Thinking
+### OpenAI — Explanations & Built-in Reasoning
 
-Two complementary reasoning approaches. See [openai/openai_cot_thinking.py](openai/openai_cot_thinking.py).
+Three related approaches. See [openai/openai_cot_thinking.py](openai/openai_cot_thinking.py).
 
-**CoT via prompt** (any model) — the model reasons visibly inside its reply:
+**Requested step-by-step explanation** (any model) — asks the model to include an explanation in its visible reply. This is generated answer text, not access to its raw internal reasoning:
 
 ```python
 response = client.chat.completions.create(
@@ -154,26 +154,37 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)  # includes the reasoning steps
 ```
 
-**Built-in Thinking** (o-series models) — the model reasons internally before answering:
+**Built-in reasoning** — a reasoning model spends internal reasoning tokens before answering. OpenAI recommends the Responses API for reasoning workloads:
 
 ```python
-response = client.chat.completions.create(
-    model="o4-mini",
-    reasoning_effort="medium",  # "low" | "medium" | "high"
-    messages=[{"role": "user", "content": "Your question here"}],
+response = client.responses.create(
+    model="gpt-5.6",
+    reasoning={"effort": "medium"},
+    input="Your question here",
 )
-# msg.content is the final answer ONLY — reasoning is hidden server-side
-# and never returned in the response body. The only trace is the token count:
-# response.usage.completion_tokens_details.reasoning_tokens
-print(response.choices[0].message.content)
+# output_text contains the final answer, not the raw internal reasoning.
+print(response.output_text)
+# response.usage.output_tokens_details.reasoning_tokens
 ```
 
-> **Note:** This is the key difference from Anthropic's extended thinking — Claude can optionally return its thinking content blocks so you can read the reasoning; OpenAI keeps it fully hidden.
+**Optional reasoning summary** — supported models can return a model-generated summary. It is not raw chain-of-thought:
+
+```python
+response = client.responses.create(
+    model="gpt-5.6",
+    reasoning={"effort": "medium", "summary": "auto"},
+    input="Your question here",
+)
+for item in response.output:
+    if item.type == "reasoning":
+        for summary_part in item.summary:
+            print(summary_part.text)
+```
 
 **Sample output:**
 
 ```text
-=== CoT via prompt (gpt-4o-mini) ===
+=== Requested step-by-step explanation (gpt-4o-mini) ===
 Let's define the cost of the ball as x dollars. According to the problem, the bat costs $1.00 more
 than the ball, which can be expressed as x + 1.00 dollars.
 
@@ -186,14 +197,14 @@ Now, we can set up the equation based on the total cost:
 Thus, the cost of the ball is 0.05 dollars, or 5 cents.
 The ball costs $0.05 (5 cents).
 
-=== Built-in Thinking (o4-mini, effort=medium) ===
+=== Built-in reasoning (gpt-5.6, effort=medium) ===
 Answer: The ball costs $0.05 (5 cents).
-Tokens — prompt: 38, reasoning: 128, output: 23
+Tokens — input: <varies>, reasoning: <varies>, output: <varies>
 ```
 
-The token breakdown confirms the thinking happened: **128 reasoning tokens** were consumed silently before the final answer — none of that content appears in `msg.content`. Exact token counts vary by model and response.
+The token breakdown shows that reasoning tokens were used internally. Raw reasoning does not appear in `response.output_text`; an optional summary must be requested explicitly. Exact token counts vary by request and response.
 
-**Models:** `o4-mini`, `o3`, `o3-mini`, `o1`
+**Model:** `gpt-5.6`
 
 ---
 
@@ -327,7 +338,7 @@ using_llm_api/
 ├── openai/
 │   ├── openai_basic.py          # Basic GPT call
 │   ├── open_ai_stream.py        # Streaming GPT call
-│   ├── openai_cot_thinking.py   # CoT via prompt + built-in thinking (o-series)
+│   ├── openai_cot_thinking.py   # Requested explanation + built-in reasoning
 │   └── gpt.py
 ├── google/
 │   └── google_gemini.py         # Gemini call
