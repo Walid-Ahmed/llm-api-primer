@@ -29,6 +29,8 @@ def stream_gpt(prompt):
         # `or ""` means: use the streamed text if it exists; otherwise use an empty string.
         # This does not return a boolean — it keeps `content` safe to print as text.
         content = chunk.choices[0].delta.content or ""
+        # An empty string is falsy, so this block runs only when the chunk contains text.
+        # This skips print() for metadata-only or empty chunks.
         if content:
             # flush=True forces each token to print immediately (typing effect)
             print(content, end="", flush=True)
