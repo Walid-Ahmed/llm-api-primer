@@ -9,6 +9,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Reuse one problem so the approaches are easy to compare.
 PROBLEM = "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?"
+REASONING_MODEL = "gpt-5-nano"  # Lowest-cost hosted OpenAI reasoning model.
 
 # ── 1. Requested step-by-step explanation (works with any model) ──────────
 # This does NOT enable a special hidden reasoning mode.
@@ -30,11 +31,11 @@ explanation_response = client.chat.completions.create(
 print(explanation_response.choices[0].message.content)
 
 # ── 2. Built-in reasoning via the Responses API ────────────────────────────
-# gpt-5.6 reasons internally before answering. reasoning.effort controls how
+# gpt-5-nano reasons internally before answering. reasoning.effort controls how
 # much reasoning it performs; supported values depend on the selected model.
-print("\n=== Built-in reasoning (gpt-5.6, effort=medium) ===")
+print(f"\n=== Built-in reasoning ({REASONING_MODEL}, effort=medium) ===")
 thinking_response = client.responses.create(
-    model="gpt-5.6",
+    model=REASONING_MODEL,
     reasoning={"effort": "medium"},
     input=PROBLEM,
 )
@@ -60,7 +61,7 @@ SHOW_REASONING_SUMMARY = False
 
 if SHOW_REASONING_SUMMARY:
     summary_response = client.responses.create(
-        model="gpt-5.6",
+        model=REASONING_MODEL,
         reasoning={"effort": "medium", "summary": "auto"},
         input=PROBLEM,
     )

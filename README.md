@@ -38,14 +38,15 @@ Go through the files in this order if you are learning LLM APIs from scratch:
 5. [`openai/openai_cot_thinking.py`](openai/openai_cot_thinking.py) — compare a requested explanation with built-in reasoning and an optional reasoning summary.
 6. [`anthropic/anthropic_claude.py`](anthropic/anthropic_claude.py) — learn Claude's message format and separate `system` parameter.
 7. [`anthropic/claude_stream.py`](anthropic/claude_stream.py) — stream Claude responses.
-8. [`google/google_gemini.py`](google/google_gemini.py) — see how Gemini handles system instructions.
-9. [`deepseek.py`](deepseek.py) — reuse the OpenAI client with a different provider via `base_url`.
-10. [`ollama_api.py`](ollama_api.py) — run a local model with Ollama.
-11. [`simple_chatbot/chat_bot1.py`](simple_chatbot/chat_bot1.py) — understand multi-turn memory with a simple history list.
-12. [`simple_chatbot/simple_chatbot.py`](simple_chatbot/simple_chatbot.py) — run an interactive terminal chatbot.
-13. [`simple_chatbot/simple_chatbot2.py`](simple_chatbot/simple_chatbot2.py) — choose the assistant personality before chatting.
-14. [`simple_chatbot/chatbot_langchain.py`](simple_chatbot/chatbot_langchain.py) — compare the plain Python chatbot with LangChain's history wrapper.
-15. [`two_model_chat/gpt_claude/gpt_claude.py`](two_model_chat/gpt_claude/gpt_claude.py) — watch GPT and Claude talk to each other.
+8. [`Anthropic/anthropic_thinking.py`](Anthropic/anthropic_thinking.py) — print Claude's visible thinking, final answer, and thinking-token usage.
+9. [`google/google_gemini.py`](google/google_gemini.py) — see how Gemini handles system instructions.
+10. [`deepseek.py`](deepseek.py) — reuse the OpenAI client with a different provider via `base_url`.
+11. [`ollama_api.py`](ollama_api.py) — run a local model with Ollama.
+12. [`simple_chatbot/chat_bot1.py`](simple_chatbot/chat_bot1.py) — understand multi-turn memory with a simple history list.
+13. [`simple_chatbot/simple_chatbot.py`](simple_chatbot/simple_chatbot.py) — run an interactive terminal chatbot.
+14. [`simple_chatbot/simple_chatbot2.py`](simple_chatbot/simple_chatbot2.py) — choose the assistant personality before chatting.
+15. [`simple_chatbot/chatbot_langchain.py`](simple_chatbot/chatbot_langchain.py) — compare the plain Python chatbot with LangChain's history wrapper.
+16. [`two_model_chat/gpt_claude/gpt_claude.py`](two_model_chat/gpt_claude/gpt_claude.py) — watch GPT and Claude talk to each other.
 16. [`two_model_chat/ollama_dual_chat/ollama_dual_chat.py`](two_model_chat/ollama_dual_chat/ollama_dual_chat.py) — repeat the dual-chat pattern using local Ollama models.
 17. [`notebooks/`](notebooks/) — every script above also has a notebook version, at the same relative path (e.g. `openai/gpt.py` → `notebooks/openai/gpt.ipynb`). Use whichever form you prefer for experimentation.
 
@@ -90,6 +91,30 @@ with result as stream:
     for text in stream.text_stream:
         print(text, end="", flush=True)
 ```
+
+**With extended thinking:** See [Anthropic/anthropic_thinking.py](Anthropic/anthropic_thinking.py).
+
+```python
+response = client.messages.create(
+    model="claude-haiku-4-5-20251001",
+    max_tokens=2048,
+    thinking={"type": "enabled", "budget_tokens": 1024},
+    messages=[{"role": "user", "content": "Solve this problem"}],
+)
+
+for block in response.content:
+    if block.type == "thinking":
+        print("Thinking:", block.thinking)
+    elif block.type == "text":
+        print("Answer:", block.text)
+
+print(
+    "Thinking tokens:",
+    response.usage.output_tokens_details["thinking_tokens"],
+)
+```
+
+The returned thinking block may be summarized and is not guaranteed to contain the exact raw internal reasoning. Thinking tokens are included in billed output tokens, and `budget_tokens` must be lower than `max_tokens`.
 
 **Models:** `claude-opus-4-7`, `claude-sonnet-4-6`, `claude-haiku-4-5-20251001`
 
@@ -158,7 +183,7 @@ print(response.choices[0].message.content)  # includes the reasoning steps
 
 ```python
 response = client.responses.create(
-    model="gpt-5.6",
+    model="gpt-5-nano",  # Lowest-cost hosted OpenAI reasoning model
     reasoning={"effort": "medium"},
     input="Your question here",
 )
@@ -171,7 +196,7 @@ print(response.output_text)
 
 ```python
 response = client.responses.create(
-    model="gpt-5.6",
+    model="gpt-5-nano",
     reasoning={"effort": "medium", "summary": "auto"},
     input="Your question here",
 )
@@ -197,14 +222,14 @@ Now, we can set up the equation based on the total cost:
 Thus, the cost of the ball is 0.05 dollars, or 5 cents.
 The ball costs $0.05 (5 cents).
 
-=== Built-in reasoning (gpt-5.6, effort=medium) ===
+=== Built-in reasoning (gpt-5-nano, effort=medium) ===
 Answer: The ball costs $0.05 (5 cents).
 Tokens — input: <varies>, reasoning: <varies>, output: <varies>
 ```
 
 The token breakdown shows that reasoning tokens were used internally. Raw reasoning does not appear in `response.output_text`; an optional summary must be requested explicitly. Exact token counts vary by request and response.
 
-**Model:** `gpt-5.6`
+**Model:** `gpt-5-nano`
 
 ---
 
@@ -334,6 +359,7 @@ Two local Ollama models conversing with each other. See [two_model_chat/ollama_d
 using_llm_api/
 ├── anthropic/
 │   ├── anthropic_claude.py      # Basic Claude call
+│   ├── anthropic_thinking.py    # Extended thinking + token usage
 │   └── claude_stream.py         # Streaming Claude call
 ├── openai/
 │   ├── openai_basic.py          # Basic GPT call
